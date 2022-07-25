@@ -6,36 +6,33 @@ public class Main {
 	public static HashMap<Integer, String> Lzw1 = new HashMap<Integer, String>();
 	public static void main(String[] args) {
 
-				System.out.println(lzwEncoded("bananabanana "));
-//				String code = lzwEncoded("bananabanana " ); 
-		lzwDecoded("98 97 110 257 97 256 258 258");    
+//				System.out.println(lzwEncoded("bananabanana"));
+		
+		
+				String code = lzwEncoded("bigibananabigibananabigbanana");
+				System.out.println(code);
+		        System.out.println(lzwDecoded(code));    
 	}
-//	"bananabanana" 98 97 110 97 258 
 
-//	98 97 110 257 97 
-//	
-//	ba 256
-//	an 257
-//	na 258
-//	an 259
-//	ab 260
 	
 	
 	public static String lzwEncoded (String text) {
-		//		HashMap<String, Integer> Lzw = new HashMap<String, Integer>();
+		
 		String newCode = "";
 		String printWord  = "";
 		String checkWord2 = "";
 		int number = 256;
 		int k;
 		char a;
+		
 
-		for (int i = 0; i < text.length(); i++) {
+		for (int i = 0; i <= text.length(); i++) {
 
 			k=i;
 			for (int j = i; j < text.length(); j++) {
 				checkWord2 += text.charAt(k);
 				if (Lzw.get(checkWord2) == null && checkWord2.length() !=-1 ) {
+					
 					if (printWord.length() == 1) {
 						a = printWord.charAt(0); 
 						int b = (int) a;
@@ -64,12 +61,15 @@ public class Main {
 					number++;
 
 
-					if (checkWord2.length() > 2) {
+//					if (printWord.length() >= 2) {
+                    for (int j2 = printWord.length(); j2 > 2; j2--) {
+							
+                               	i++;
+						}
+						
 
-						i++;
-
-					}
-					checkWord2 = "";
+//					}
+					checkWord2 ="";
 					printWord="";
 					break;
 				}
@@ -100,12 +100,12 @@ public class Main {
 
 
 			if ((int)code.charAt(i)  == 32  ) {
-				System.out.print(word + " " );
+//				System.out.print(word + " " );
 				if (word<256) {
 					check1 += ((char)word);
 				}
 				else {
-					check1+= Lzw1.get(word);
+					check1+= Lzw1.get(word) ;
 				}
 
 				word = 0;
@@ -129,8 +129,8 @@ public class Main {
 
 
 
-		System.out.println(check1);   
-		return check2;
+//		System.out.println(check1);   
+		return check1;
 	}
 
 
