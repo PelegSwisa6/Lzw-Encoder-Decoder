@@ -2,6 +2,7 @@ import java.util.Scanner;
 import java.util.HashMap;
 public class Main {
 
+	private static final char String = 0;
 	public static HashMap<String, Integer> Lzw = new HashMap<String, Integer>();
 	public static HashMap<Integer, String> Lzw1 = new HashMap<Integer, String>();
 	public static void main(String[] args) {
@@ -9,7 +10,7 @@ public class Main {
 //				System.out.println(lzwEncoded("bananabanana"));
 		
 		
-				String code = lzwEncoded("bigibananabigibananabigbanana");
+				String code = lzwEncoded("bananabananabanana");
 				System.out.println(code);
 		        System.out.println(lzwDecoded(code));    
 	}
@@ -17,6 +18,14 @@ public class Main {
 	
 	
 	public static String lzwEncoded (String text) {
+//		Lzw.put("bi" , 256 );
+//		Lzw.put("big" , 257 );
+//		Lzw.put("bigb" , 258 );   //bigbaloon  257 264  == bigbaloon 
+//		Lzw.put("ba" , 260 );     //258 97 bigb a
+//		Lzw.put("bal" , 261 );
+//		Lzw.put("balo" , 262 );
+//		Lzw.put("baloo" , 263 );
+//		Lzw.put("baloon" , 264 );
 		
 		String newCode = "";
 		String printWord  = "";
@@ -24,6 +33,7 @@ public class Main {
 		int number = 256;
 		int k;
 		char a;
+		String newCode2 = "";
 		
 
 		for (int i = 0; i <= text.length(); i++) {
@@ -31,24 +41,22 @@ public class Main {
 			k=i;
 			for (int j = i; j < text.length(); j++) {
 				checkWord2 += text.charAt(k);
-				if (Lzw.get(checkWord2) == null && checkWord2.length() !=-1 ) {
+				if (Lzw.get(checkWord2) == null && checkWord2.length() !=-1 && checkWord2.length() !=1  ) {
 					
-					if (printWord.length() == 1) {
-						a = printWord.charAt(0); 
-						int b = (int) a;
-						//						System.out.print(b  + "  ");
-						newCode += b + " ";
-//						System.out.print(b + " ");
-//						System.out.println(printWord);
-
+					newCode = depthCheck(text, i, printWord);
+					
+//					System.out.println(newCode);
+					if (newCode.length() ==1) {
+					a = newCode.charAt(0);
+					int b = (int)a;
+					newCode2+= b + " "; }
+					else {
+						
+						newCode2 += Lzw.get(newCode) + " ";
 					}
-					if (printWord.length() > 1) {
-						//						System.out.print(Lzw.get(printWord ));
-						//						System.out.print("  ");
-						newCode += Lzw.get(printWord) + " " ;
-//                        System.out.print(Lzw.get(printWord) + " ");
-//                        System.out.println(printWord);
-					}
+					
+					
+					
 				}
 
 
@@ -84,8 +92,37 @@ public class Main {
 
 		}
 
-		return newCode;
+		return newCode2;
 
+	}
+	
+	
+	public static String depthCheck(String text, int i , String printWord) {
+		String b ="";
+		String newCode="";
+		
+		
+		if (printWord.length() == 1) {
+		
+			 b += printWord.charAt(0);
+			//						System.out.print(b  + "  ");
+//			newCode += b + " ";
+			return b;
+//			System.out.print(b + " ");
+//			System.out.println(printWord);
+
+		}
+		if (printWord.length() > 1) {
+			//						System.out.print(Lzw.get(printWord ));
+			//						System.out.print("  ");
+			newCode += printWord ;
+			return newCode;
+//            System.out.print(Lzw.get(printWord) + " ");
+//            System.out.println(printWord);
+		}
+		
+		
+		return "";
 	}
 
 	public static String lzwDecoded (String code) {
