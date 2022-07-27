@@ -10,22 +10,22 @@ public class Main {
 //				System.out.println(lzwEncoded("bananabanana"));
 		
 		
-				String code = lzwEncoded("bananabananabanana");
+				String code = lzwEncoded("bigbaloon");
 				System.out.println(code);
-		        System.out.println(lzwDecoded(code));    
+//		        System.out.println(lzwDecoded(code));    
 	}
 
 	
 	
 	public static String lzwEncoded (String text) {
-//		Lzw.put("bi" , 256 );
-//		Lzw.put("big" , 257 );
-//		Lzw.put("bigb" , 258 );   //bigbaloon  257 264  == bigbaloon 
-//		Lzw.put("ba" , 260 );     //258 97 bigb a
-//		Lzw.put("bal" , 261 );
-//		Lzw.put("balo" , 262 );
-//		Lzw.put("baloo" , 263 );
-//		Lzw.put("baloon" , 264 );
+		Lzw.put("bi" , 256 );
+		Lzw.put("big" , 257 );
+		Lzw.put("bigb" , 258 );   //bigbaloon  257 264  == bigbaloon 
+		Lzw.put("ba" , 260 );     //258 97 bigb a
+		Lzw.put("bal" , 261 );
+		Lzw.put("balo" , 262 );
+		Lzw.put("baloo" , 263 );
+		Lzw.put("baloon" , 264 );
 		
 		String newCode = "";
 		String printWord  = "";
@@ -34,22 +34,40 @@ public class Main {
 		int k;
 		char a;
 		String newCode2 = "";
+		int depth = 2;
 		
 
 		for (int i = 0; i <= text.length(); i++) {
 
 			k=i;
 			for (int j = i; j < text.length(); j++) {
-				checkWord2 += text.charAt(k);
+				checkWord2 += text.charAt(k);  //bigba
 				if (Lzw.get(checkWord2) == null && checkWord2.length() !=-1 && checkWord2.length() !=1  ) {
 					
-					newCode = depthCheck(text, i, printWord);
+//					System.out.println(k + " makom");
+//					newCode = depthCheck(text, k, printWord , depth);
 					
-//					System.out.println(newCode);
+				
+					
+					if (depthCheck(text, k, printWord , depth).length() < depthCheck(text, k, printWord.substring(0, printWord.length()-1) , depth).length()) 
+						newCode = printWord; //bigb //big //bi
+					else {
+						newCode = printWord.substring(0, printWord.length()-1);
+					i--;
+//					k--;
+					}
+					
+					
+						
+					
+					
+//					System.out.println(newCode);             bigba
 					if (newCode.length() ==1) {
 					a = newCode.charAt(0);
 					int b = (int)a;
 					newCode2+= b + " "; }
+					
+					
 					else {
 						
 						newCode2 += Lzw.get(newCode) + " ";
@@ -97,32 +115,58 @@ public class Main {
 	}
 	
 	
-	public static String depthCheck(String text, int i , String printWord) {
+	public static String depthCheck(String text, int i , String printWord , int depth ) {
 		String b ="";
 		String newCode="";
-		
-		
-		if (printWord.length() == 1) {
-		
-			 b += printWord.charAt(0);
-			//						System.out.print(b  + "  ");
+		String checkWord3 = "";
+		for (int j = 0; j < depth; j++) {         //bigbaloon
+			
+			if (printWord.length() == 1) {
+				  
+				b += printWord.charAt(0);
+				//						System.out.print(b  + "  ");
 //			newCode += b + " ";
-			return b;
+				newCode += b;
 //			System.out.print(b + " ");
 //			System.out.println(printWord);
-
-		}
-		if (printWord.length() > 1) {
-			//						System.out.print(Lzw.get(printWord ));
-			//						System.out.print("  ");
-			newCode += printWord ;
-			return newCode;
+				
+			}
+			if (printWord.length() > 1) {
+				//						System.out.print(Lzw.get(printWord ));    //bananabananabanana  length = 18
+				//						System.out.print("  ");
+				newCode += printWord ;
+				  
 //            System.out.print(Lzw.get(printWord) + " ");
 //            System.out.println(printWord);
+			}
+			
+			for (int j2 = printWord.length(); j2 > 2; j2--) {   //bigbaloon  //5  
+				
+               	i++;
+		}
+			int k=0;
+//			System.out.println(i);
+//			System.out.println(printWord);
+//			System.out.println(k);
+			
+			
+			for (int j2 = 0; j2 < text.length(); j2++) {   //bigbaloon
+				
+				checkWord3 += text.charAt((i+j2));
+				k++;
+				
+				if (Lzw.get(checkWord3) == null && checkWord3.length() !=-1 ) {
+					printWord = checkWord3.substring(0 , checkWord3.length()-1);
+					break;
+				}
+				
+			}
 		}
 		
+		return newCode;
 		
-		return "";
+		
+		
 	}
 
 	public static String lzwDecoded (String code) {
