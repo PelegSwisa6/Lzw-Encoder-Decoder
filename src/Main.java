@@ -1,5 +1,8 @@
 
 import java.util.Scanner;
+
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+
 import java.util.HashMap;
 public class Main {
 
@@ -11,7 +14,7 @@ public class Main {
 		//				System.out.println(lzwEncoded("bananabanana"));
 
 
-		String code = lzwEncoded("banmbaloon");
+		String code = lzwEncoded("bigbaloonec ");
 		System.out.println(code);
 		//		        System.out.println(lzwDecoded(code));    
 	}
@@ -19,14 +22,19 @@ public class Main {
 
 
 	public static String lzwEncoded (String text) {
-		Lzw.put("ba" , 256 );
-		Lzw.put("ban" , 257 );
-		Lzw.put("banm" , 258 );   //bigbaloon  257 264  == bigbaloon 
+		Lzw.put("bi" , 256 );
+		Lzw.put("big" , 257 );
+		Lzw.put("bigb" , 258 );   //bigbaloon  257 264  == bigbaloon 
 		Lzw.put("ba" , 260 );     //258 97 bigb a
 		Lzw.put("bal" , 261 );
 		Lzw.put("balo" , 262 );
 		Lzw.put("baloo" , 263 );
 		Lzw.put("baloon" , 264 );
+		Lzw.put("lo" , 265 );
+		Lzw.put("loo" , 266 );
+		Lzw.put("loon" , 267 );
+		Lzw.put("loone" , 268 );
+		Lzw.put("loonec" , 269 );
 
 		String newCode = "";
 		String printWord  = "";
@@ -35,8 +43,10 @@ public class Main {
 		int k;
 		char a;
 		String newCode2 = "";
-		int depth = 2;
+		int depth = 3;
 		int count = 1; 
+		
+		
 
 
 		for (int i = 0; i <= text.length(); i++) {
@@ -51,27 +61,27 @@ public class Main {
 
 
 
-					
+
 					System.out.println(depthCheck(text, k, printWord , depth) + " 1" );
-                    System.out.println(depthCheck(text, k-1, printWord.substring(0, printWord.length()-1) , depth) + " 2" );
-					
-                     if (count < depth) {
-						
-                    	 if (depthCheck(text, k, printWord , depth).length() >= depthCheck(text, k-1, printWord.substring(0, printWord.length()-1) , depth).length()) {
-                    		 newCode = printWord; //bigb //big //bi
-                    	 count++;}
-                    	 else {
-                    		 newCode = printWord.substring(0, printWord.length()-1);
-                    		 i--;
-                    		 k--;
-                    		 count++;
-                    	 }
+					System.out.println(depthCheck(text, k-1, printWord.substring(0, printWord.length()-1) , depth) + " 2" );
+
+					if (count < 2) {
+
+						if (depthCheck(text, k, printWord , depth).length() >= depthCheck(text, k-1, printWord.substring(0, printWord.length()-1) , depth).length()) {
+							newCode = printWord; //bigb //big //bi
+							count++;}
+						else {
+							newCode = printWord.substring(0, printWord.length()-1);
+							i--;
+							k--;
+							count++;
+						}
 					}
-                     else { 
-                    	 
-                    	 newCode = depthCheck(text, k, printWord , 1);
-                     }
-                     
+					else { 
+
+						newCode = depthCheck(text, k, printWord , 1);
+					}
+
 
 
 
@@ -132,12 +142,15 @@ public class Main {
 
 
 	public static String depthCheck(String text, int i , String printWord , int depth ) {
-		//		System.out.println(i + " big ");
+//				System.out.println(i + " big ");
 		String b ="";
 		String newCode="";
 		String checkWord3 = "";
+		int count = 0;
+		String buildI = "";
 
 		for (int j = 0; j < depth; j++) {         //bigbaloon
+			
 
 			if (printWord.length() == 1) {
 
@@ -145,52 +158,66 @@ public class Main {
 				//						System.out.print(b  + "  ");
 				//			newCode += b + " ";
 				newCode += b;
+				 buildI=printWord;
 				printWord ="";
-				//			System.out.print(b + " ");
-				//			System.out.println(printWord);
+//				System.out.println(newCode);
+
 
 			}
 			if (printWord.length() > 1) {
 				//						System.out.print(Lzw.get(printWord ));    //bananabananabanana  length = 18
 				//						System.out.print("  ");
 				newCode += printWord ;
+				buildI=printWord;
 				printWord ="";  
-				//            System.out.print(Lzw.get(printWord) + " ");
-				//            System.out.println(printWord);
-			}
+//				System.out.println(newCode);
 
-			for (int j2 = printWord.length(); j2 > 2; j2--) {   //bigbaloon  
+			}
+			
+			checkWord3="";
+			
+			if (count==0) {
+//				i++;
+//				System.out.println(i);
+				count++;
+			} 
+			else {
+			for (int j2 = buildI.length(); j2 > 0; j2--) {   //bigbaloon  
 				i++;
-
-
 			}
-			int k=0;
-			//			System.out.println(i);
-			//			System.out.println(printWord);
-			//			System.out.println(k);
+			}
+			
+			  
+			
+			
+			if (i>=text.length()) {
+				break;
+			}
+			
 
-			int r=0;
+			
 			for (int j2 = 0; j2 <= text.length(); j2++) {   //bigbaloon
 
 				checkWord3 += text.charAt(i+j2);
-//								System.out.println(checkWord3 +  " checkWord");
-//								System.out.println(text.charAt(i+k));
+//				System.out.println(checkWord3 +  " checkWord");
+				//								System.out.println(text.charAt(i+k));
 				//				i++;
 
 
-				if ( i+j2 == text.length()-1 ) {
 
-					printWord = checkWord3;
-					//					System.out.println(printWord);
-					break;
-
-				}
-
-				if (Lzw.get(checkWord3) == null && checkWord3.length() !=-1 && checkWord3.length()!=1  ) {
+				if (Lzw.get(checkWord3) == null && checkWord3.length() !=-1 && checkWord3.length() != 1  ) {
 					printWord = checkWord3.substring(0 , checkWord3.length()-1);
 					//					System.out.println(printWord + " printWord");
 					//					j2=text.length
 					break;
+				}
+				if ( i+j2 >= text.length()-1  ) {
+					
+					printWord = checkWord3;
+					
+					//					System.out.println(printWord);
+					break;
+					
 				}
 
 			}
