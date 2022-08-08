@@ -4,6 +4,7 @@ import java.util.Scanner;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.sun.org.apache.xpath.internal.axes.WalkingIteratorSorted;
 
+import java.awt.desktop.ScreenSleepEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,46 +21,66 @@ public class Main {
 
 	private static final char String = 0;
 	public static HashMap<String, Integer> Lzw = new HashMap<String, Integer>();
-    public static HashMap<Integer, String> Lzw1 = new HashMap<Integer, String>();
-    public static HashMap<String, Integer> Lzw3 = new HashMap<String, Integer>();   
-    public static HashMap<Integer,String> Lzw4 = new HashMap< Integer,String>();   
-    
-    static String IN_FILE_PATH = "Smiley - Copy.bmp";
-	static String OUT_FILE_PATH = "c.txt";
+	public static HashMap<Integer, String> Lzw1 = new HashMap<Integer, String>();
+	public static HashMap<String, Integer> Lzw3 = new HashMap<String, Integer>();   
+	public static HashMap<Integer,String> Lzw4 = new HashMap< Integer,String>();   
+
+	public static String IN_FILE_PATH = "";
+	public static String BACK_UP_PATH = "";
+	public static String COMPRESS_PATH;
+	public static String OUT_FILE_PATH = "c.txt";
 	static String END_FILE_PATH = "Smileyb.bmp";       //    
-	 
-	
+	static int depth;
+
+	public Main(String IN_FILE_PATH , String COMPRESS_PATH , int depth , String BACK_UP_PATH) {
+		this.IN_FILE_PATH = IN_FILE_PATH ;
+		this.COMPRESS_PATH = COMPRESS_PATH;
+		this.depth = depth;
+		this.BACK_UP_PATH = BACK_UP_PATH ;
+		
+
+	}
+
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws IOException, InterruptedException {
 
-		int depth = 1 ;
+		MainFrame window = new MainFrame();
+
+		boolean wait = true;
+
+		while(IN_FILE_PATH.length() == 0 ) {
+			System.out.println("wait for user");
+
+		}
+
+		IN_FILE_PATH = IN_FILE_PATH;
+        COMPRESS_PATH = COMPRESS_PATH;
+		depth = depth;
+		BACK_UP_PATH = BACK_UP_PATH;
+		
+
 		String code2 = "";
 		char a =' ';
-		
+
 		FileInputStream input;
 		FileOutputStream output;
 		FileOutputStream end;
 
-		
 
-		File path = new File("Romeo and Juliet  Entire Play.txt");
-		byte[] array = method(path);
-		
 
-		input = new FileInputStream("Romeo and Juliet  Entire Play.txt");	
-		output = new FileOutputStream(OUT_FILE_PATH);
-		end = new FileOutputStream(END_FILE_PATH);
+		//		File path = new File("OnTheOrigin.txt");
+		//		byte[] array = method(path);
+
+
+		input = new FileInputStream(IN_FILE_PATH);	
+		//		output = new FileOutputStream(OUT_FILE_PATH);
+		//		end = new FileOutputStream(END_FILE_PATH);
 
 		String mishpat = "a";
 		StringBuilder fb = new StringBuilder();
 		int i = 1;
-		
-		
 
-		
-		
-		
-		
+
 		while (true)				
 
 		{
@@ -84,188 +105,155 @@ public class Main {
 		String code = lzwEncoded(fb.toString() ,depth);
 		BufferedWriter writer1 = new BufferedWriter(new FileWriter("numbers.txt"));
 		writer1.write(code);
+
 		
 		String write = numbersCompress(code);
-		BufferedWriter writer4 = new BufferedWriter(new FileWriter("end.txt"));
+
+		BufferedWriter writer4 = new BufferedWriter(new FileWriter(COMPRESS_PATH +".txt"));
 		writer4.write(write);
-		
-		
-	    
-	    
-	    
-	    
-	    
-	    
-	    String check2 = "";
-	    String end2 = "";
-	    int two = 0;
-	    
-	    for (int j = 0; j < write.length(); j++) {
-	    	
-	    	if ( check2.length() == 2) {
-	    		
-	    		end2 += Lzw3.get(check2) + " "; 
-//	    		System.out.println(Lzw3.get(check2));
 
-	    		check2 = "";
-	    		two =0;
-	    	}
-	    	else
-	    		check2 += write.charAt(j);
-//	    	    check2 += write.charAt(j+1);
-	    	two++;
 
-	    		
-			
-		}
-	    
-//	    System.out.println(Lzw3.get("!\""));
-//	    System.out.println(Lzw4.get(82));
-	    
+
+
+		String end2;
+		end2 = restoreNumbers(write);
 		BufferedWriter writer5 = new BufferedWriter(new FileWriter("end2.txt"));
 		writer5.write(end2);
+
+
+		String decode = lzwDecoded(end2);	
+		
+
+
+		int start ;
+		int endText ; 
+		if (IN_FILE_PATH.charAt(IN_FILE_PATH.length()-4) == '.') {
+			 start = IN_FILE_PATH.length()-4;		
+		}
+		else
+			start = IN_FILE_PATH.length()-5;		
 		
 		
-		String decode = lzwDecoded(end2);
+		 endText = IN_FILE_PATH.length();
 		
-		
-		BufferedWriter writer6 = new BufferedWriter(new FileWriter("backUp.txt"));
+		BufferedWriter writer6 = new BufferedWriter(new FileWriter(BACK_UP_PATH + IN_FILE_PATH.substring(start, endText)));
+
 		writer6.write(decode);
 		
+		System.out.println("done");
 		
 		
-//	System.out.println(Lzw3.get("1+"));
+		MainFrame done = new MainFrame("THE FILE IS COMPRESSED AND SAVE IN LZW FOLDER UNDER THE NAME: " + COMPRESS_PATH + " THE RESTORE FILE SAVE UNDER NAME: " + BACK_UP_PATH  );
 
-	    
-	    
-	    
+		
+		writer1.close();
+		writer4.close();   
+		writer5.close();
+		writer6.close(); 
+	}
 	
-	    
-			
-			
-			
 
-		
-		
-		
-		    
+
+	public static String restoreNumbers (String bytes) {
+
+		String check2 = "";
+		String end2 = "";
+
+
+		for (int j = 0; j < bytes.length(); j++) {
+
+			if ( check2.length() == 2) {
+
+				end2 += Lzw3.get(check2) + " "; 
+
+				check2 = "";
+			}
+
+			check2 += bytes.charAt(j);
+
 		}
-		
+		return end2 ;
+
+	}
+
 	public static String numbersCompress (String code) {
 		int word = 0;
-	    int A = 33;
-	    int B = 33;
-	    String check1 = "";
-	    String write = "";
-	    for (int k = 0; k < code.length(); k++) {
+		int A = 1;
+		int B = 1;
+
+		String check1 = "";
+		String write = "";
+		for (int k = 0; k < code.length(); k++) {
 
 
 			if ( code.charAt(k)  == ' '  ) {
-//				if (word < 100 ) {
-//					check1 +=  word;
-//					write += check1 ;
-//					
-//					Lzw3.put(check1, word);
-//					Lzw4.put(word , check1);
-//					check1 = "";
-//				    word = 0;
-//				}
-				if(word>=0) {
-			        
+			
+				if(word >= 0) {
 					check1 += (char)A;
 					check1 += (char)B;
-					
+
 					System.out.println(check1);
 					System.out.println(word);
 					Lzw3.put(check1, word);
 					Lzw4.put(word ,check1 );
 					write += check1;
- 
+
 					if (A == 32 || A == 34) 
 						A++;
-					
-					
+
 					if (B == 32 || B == 34 )
 						B++;
-					
-					if (B == 254) {
+
+//					if (C == 32 || C == 34) 
+//						C++;
+
+					if (B == 254 && A != 254) {
 						A++;
-						B=0;
+						B=1;
 					}
 					
+//					if (A == 254 && B == 254) {
+////						C++;
+//						A = 35;
+//						B = 35;
+//					}
+
 					B++;
+					
 					check1 = "";
-				    word = 0;
+					word = 0;
 				}
 
 			}
 
 			else {
 
-				
 				word *= 10;
 				word = word +  (code.charAt(k)-48) ;
-				}
 			}
+		}
 		return write;
 	}
 
+
+
 	
 	
 	
-	public static byte stringToByte (String s) {
-		int num = Integer.parseInt(s,10);
-		byte newCode = (byte) num;
-		return newCode;
-	}
-
-    // Method 1
-    // To convert file to byte array
-    public static byte[] method(File file)
-        throws IOException
-    {
-  
-        // Creating an object of FileInputStream to
-        // read from a file
-        FileInputStream fl = new FileInputStream(file);
-  
-        // Now creating byte array of same length as file
-        byte[] arr = new byte[(int)file.length()];
-  
-        // Reading file content to byte array
-        // using standard read() method
-        fl.read(arr);
-  
-        // lastly closing an instance of file input stream
-        // to avoid memory leakage
-        fl.close();
-  
-        // Returning above byte array
-        return arr;
-    }
-	  
-
-
 	public static String lzwEncoded (String text, int depth2) throws IOException, InterruptedException {
 
 
-
-		
-
-		
-		
 
 		String newCode = "";
 		String printWord  = "";
 		String checkWord2 = "";
 		int number = 256;
 		
-		byte numByte = 0;
 		int k;
 		char a;
 		String newCode2 = "";
 		int depth = depth2;
-		int count = 2; 
+		int count = depth; 
 		int numOfNum = 0;
 
 
@@ -276,19 +264,11 @@ public class Main {
 			k=i;
 			for (int j = i; j < text.length(); j++) {
 				checkWord2 += text.charAt(k);  //bigba
-				
+
 				if (Lzw.get(checkWord2) == null && checkWord2.length() !=-1 && checkWord2.length() !=1  ) {
 
-					//					System.out.println(k + " makom");
-					//					newCode = depthCheck(text, k, printWord , depth);
 
-
-
-
-					//					System.out.println(depthCheck(text, k, printWord , depth) + " 1" );
-					//					System.out.println(depthCheck(text, k-1, printWord.substring(0, printWord.length()-1) , depth) + " 2" );
-
-					if (count % 2 == 0 ) {
+					if (depth % count == 0 ) {
 
 						if (depthCheck(text, k, printWord , depth).length() >= depthCheck(text, k-1, printWord.substring(0, printWord.length()-1) , depth).length()) {
 							newCode = printWord; 
@@ -311,17 +291,17 @@ public class Main {
 
 
 					//					System.out.println(newCode);             bigba
-					if (newCode.length() ==1) {
+					if (newCode.length() == 1) {
 						a = newCode.charAt(0);
 						int b = (int)a;
 						newCode2+= b + " " ; 
-					      numOfNum++;}
+						numOfNum++;}
 
 
 					else {
-						
+
 						newCode2 += Lzw.get(newCode) + " " ;
-					    numOfNum++;
+						numOfNum++;
 					}
 
 
@@ -331,23 +311,19 @@ public class Main {
 
 				printWord += text.charAt(k);
 				if (Lzw.get(checkWord2) == null && checkWord2.length() != 1) {
-					
 					Lzw.put(checkWord2 , number );
-					//					System.out.print(checkWord2 + " ");
-					//					System.out.println(number);
 					Lzw1.put(number, checkWord2);
-//					System.out.println(number + " " + Lzw1.get(number));
 					number++;
 
 
-					//					if (printWord.length() >= 2) {
+				
 					for (int j2 = printWord.length(); j2 > 2; j2--) {
 
 						i++;
 					}
 
 
-					//					}
+			
 					checkWord2 ="";
 					printWord="";
 					break;
@@ -362,14 +338,14 @@ public class Main {
 
 
 		}
-//		System.out.println(numOfNum);
+		
 		return newCode2;
 
 	}
 
 
 	public static String depthCheck(String text, int i , String printWord , int depth ) {
-		//				System.out.println(i + " big ");
+		
 		String b ="";
 		String newCode="";
 		String checkWord3 = "";
@@ -387,29 +363,27 @@ public class Main {
 				newCode += b;
 				buildI=printWord;
 				printWord ="";
-				//				System.out.println(newCode);
+				
 
 
 			}
 			if (printWord.length() > 1) {
-				//						System.out.print(Lzw.get(printWord ));    //bananabananabanana  length = 18
-				//						System.out.print("  ");
+			
 				newCode += printWord ;
 				buildI=printWord;
 				printWord ="";  
-				//				System.out.println(newCode);
+				
 
 			}
 
 			checkWord3="";
 
 			if (count==0) {
-				//				i++;
-				//				System.out.println(i);
+				
 				count++;
 			} 
 			else {
-				for (int j2 = buildI.length(); j2 > 0; j2--) {   //bigbaloon  
+				for (int j2 = buildI.length(); j2 > 0; j2--) {    
 					i++;
 				}
 			}
@@ -461,51 +435,41 @@ public class Main {
 
 	public static String lzwDecoded (String code) {
 		String check1 = "";
-		String check2 = "";
-		int word = 0;
-
-
-		for (int i = 0; i < code.length(); i++) {
-
-
-
-
-			if ((int)code.charAt(i)  == 32  ) {
-				//				System.out.print(word + " " );
-				if (word<256) {
-					check1 += ((int)word);
-				}
-				else {
-					check1+= Lzw1.get(word) ;
-				}
-
-				word = 0;
-
-
+		
+		String array [] = code.split(" ");
+		
+		
+		
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			
+			
+			if (Integer.parseInt(array[i]) < 256) {
+				check1 += ((char)Integer.parseInt(array[i]));
+				
 			}
-
-			else {
-
-				word *= 10;
-				word = word +  (code.charAt(i)-48) ;
-			}
-
-
-
-
-
-
+			
+			else
+				check1 += Lzw1.get(Integer.parseInt(array[i])) ; 
+			
+			
 		}
+		return check1; 
+		
 
 
 
 
-		//		System.out.println(check1);   
-		return check1;
+
+
+
+		  
+		
 	}
 
-                   	                  
-	                         
-	                  
+
+
+
 
 }
