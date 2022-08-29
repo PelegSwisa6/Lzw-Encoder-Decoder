@@ -89,7 +89,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
 		//Label
-		JLabel lblNewLabel = new JLabel("Enter your file to compress");
+		JLabel lblNewLabel = new JLabel("Enter the file you want to compress");
 		//		Panel.add(lblNewLabel);
 		panel.add(lblNewLabel);
 
@@ -107,7 +107,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
 
-		lblNewLabel_1 = new JLabel("Chose name file for compress file, and chose depth");
+		lblNewLabel_1 = new JLabel("Choose a name for the compressed file, and choose a depth");
 
 		panel.add(lblNewLabel_1);
 
@@ -122,7 +122,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		spinner.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
 		panel.add(spinner);
 
-		lblNewLabel_2 = new JLabel("chose name for decoded-file");
+		lblNewLabel_2 = new JLabel("Please choose a name for the decoded file");
 		panel.add(lblNewLabel_2);
 
 		textField_3 = new JTextField("");
